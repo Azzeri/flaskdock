@@ -1,12 +1,19 @@
-from flask import Flask
+from flask import Flask, render_template, request
+from app.solr_connector import SolrConnector
 
-helloworld = Flask(__name__)
+
+app = Flask(__name__)
 
 
-@helloworld.route("/")
-def run():
-    return "{\"message\":\"Hey\"}"
+@app.route("/search/", methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        query = request.form['query']
+
+        solr_connector = SolrConnector()
+        return solr_connector.searchByKeywords(query)
+    return render_template('search.html')
 
 
 if __name__ == "__main__":
-    helloworld.run(host="0.0.0.0", port=int("3000"), debug=True)
+    app.run(host="0.0.0.0", port=int("3000"), debug=True)
