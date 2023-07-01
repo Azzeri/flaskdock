@@ -2,3 +2,4 @@ Flask
 Requests
 simplejson
 pysolr
+nltk
