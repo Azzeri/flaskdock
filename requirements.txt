@@ -1,1 +1,4 @@
 Flask
+Requests
+simplejson
+pysolr
