@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from app.solr_connector import SolrConnector
+from app.web_crawler import WebCrawler
 
 
 app = Flask(__name__)
@@ -13,6 +14,17 @@ def search():
         solr_connector = SolrConnector()
         return solr_connector.searchByKeywords(query)
     return render_template('search.html')
+
+
+@app.route("/crawl/", methods=['GET', 'POST'])
+def crawl():
+    if request.method == 'POST':
+        url = request.form['url']
+
+        web_crawler = WebCrawler()
+        web_crawler.crawl(url)
+
+    return render_template('crawl.html')
 
 
 if __name__ == "__main__":

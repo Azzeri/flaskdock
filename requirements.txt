@@ -3,3 +3,4 @@ Requests
 simplejson
 pysolr
 nltk
+bs4
