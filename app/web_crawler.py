@@ -11,7 +11,7 @@ class WebCrawler:
     def __init__(self):
         self.nlp = Nlp()
 
-    def crawl(self, url):
+    def crawl(self, url, depth=1, max_pages=10):
         response = get(url)
 
         if response.status_code == 200:
@@ -29,6 +29,15 @@ class WebCrawler:
                     'text': content,
                     "keywords": keywords
                 })
+
+                extracted_links = self.extract_links(soup)
+                if extracted_links and depth < max_pages:
+                    for link in extracted_links:
+                        self.crawl(link, depth+1)
+
+    def extract_links(self, soup):
+        links = soup.find_all('a')
+        return [link.get('href') for link in links if link.get('href', '').startswith('https://')]
 
     def save_to_solr(self, data):
         solr_connector = SolrConnector()
