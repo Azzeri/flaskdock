@@ -22,8 +22,8 @@ class Wordnets:
     def get_semantic_similarity(self, document):
         similarity_scores = []
         for keyword in document['keywords']:
+            keyword_synsets = wordnet.synsets(keyword)
             for interest in self.user_interests:
-                keyword_synsets = wordnet.synsets(keyword)
                 interest_synsets = wordnet.synsets(interest)
 
                 if self.synsets_exist(keyword_synsets, interest_synsets):

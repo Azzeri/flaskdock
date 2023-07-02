@@ -5,30 +5,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semantica - search</title>
+    <style>
+        nav {
+            padding: 1rem;
+            width: 100vw;
+            background-color: darkgray;
+        }
+
+        form {
+            margin-top: 2rem;
+        }
+
+        main {
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 
 <body>
-    {% block content %}
+    <nav>
+        <div>
+            {% if auth %}
+            Authenticated as: {{auth.username}}({{ auth.id }})
+            <a href="{{ url_for('logout') }}">Logout</a>
+            {% endif %}
+
+            {% if not auth %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+            {% endif %}
+        </div>
+    </nav>
     <form method="POST">
         <input type="text" name="query" placeholder="Search for..." value="{{ request.form['query'] }}">
         <button type="submit">Search</button>
     </form>
-    {% endblock %}
-
-    {% if users %}
-    {%for user in users%}
-    <li>{{user.id}}. {{user.username}}: {{user.interests}}</li>
-    {% endfor %}
+    {% if searching_results %}
+    <div style="margin-top: 1rem;">Your interests: <b>{{ auth.interests }}</b></div>
+    <main>
+        <div>
+            <h3>Recommended</h3>
+            {% for result in searching_results.sorted_results %}
+            <div style="margin-bottom: 1rem;">
+                <a style="display:block;" href="{{ result.id }}">{{ result.title }}: {{ result.id }}</a>
+                <div><b>{{ result.keywords }}</b></div>
+                <div>SemScore: {{ result.semantic_similarity }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div>
+            <h3>Default</h3>
+            {% for result in searching_results.unsorted_results %}
+            <div style="margin-bottom: 1rem;">
+                <a style="display:block;" href="{{ result.id }}">{{ result.title }}: {{ result.id }}</a>
+                <div><b>{{ result.keywords }}</b></div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
     {% endif %}
 
-    <br />
-
-    {% if auth %}
-    Authenticated as: {{ auth }}: <a href="{{ url_for('logout') }}">Logout</a>
-    {% endif %}
-
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('register') }}">Register</a>
 </body>
 
 </html>

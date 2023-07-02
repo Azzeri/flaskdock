@@ -20,6 +20,8 @@ def home():
 def search():
     auth = session.get('username')
     auth_user = User.query.filter_by(username=auth).first()
+    users = User.query.all()
+
     if request.method == 'POST':
         query = request.form['query']
 
@@ -33,8 +35,8 @@ def search():
             'unsorted_results': unsorted_results,
             'sorted_results': sorted_results
         }
-    users = User.query.all()
-    return render_template('search.html', users=users, auth=auth, searching_results=searching_results)
+        return render_template('search.html', users=users, auth=auth_user, searching_results=searching_results)
+    return render_template('search.html', users=users, auth=auth_user, searching_results=None)
 
 
 @app.route("/crawl/", methods=['GET', 'POST'])
