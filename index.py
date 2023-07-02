@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session
 from app.solr_connector import SolrConnector
 from app.web_crawler import WebCrawler
 from app.database import User, init_database
+from app.wordnets import Wordnets
 import app.authentication as auth
 
 app = Flask(__name__)
@@ -17,13 +18,23 @@ def home():
 
 @app.route("/search/", methods=['GET', 'POST'])
 def search():
+    auth = session.get('username')
+    auth_user = User.query.filter_by(username=auth).first()
     if request.method == 'POST':
         query = request.form['query']
 
         solr_connector = SolrConnector()
-        return solr_connector.searchByKeywords(query)
+        unsorted_results = solr_connector.searchByKeywords(query)
+
+        wordnets = Wordnets(unsorted_results, auth_user.interests)
+        sorted_results = wordnets.apply_recommendation_mechanism()
+
+        searching_results = {
+            'unsorted_results': unsorted_results,
+            'sorted_results': sorted_results
+        }
     users = User.query.all()
-    return render_template('search.html', users=users, auth=session.get('username'))
+    return render_template('search.html', users=users, auth=auth, searching_results=searching_results)
 
 
 @app.route("/crawl/", methods=['GET', 'POST'])
