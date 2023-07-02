@@ -19,11 +19,12 @@ def login(request):
 def register(request):
     username = request.form['username']
     password = request.form['password']
+    interests = request.form['interests']
 
     if User.query.filter_by(username=username).first():
         return False
 
-    new_user = User(username=username)
+    new_user = User(username=username, interests=interests)
     new_user.set_password(password)
     db.session.add(new_user)
     db.session.commit()

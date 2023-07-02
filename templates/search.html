@@ -17,7 +17,7 @@
 
     {% if users %}
     {%for user in users%}
-    <li>{{user.id}}. {{user.username}}</li>
+    <li>{{user.id}}. {{user.username}}: {{user.interests}}</li>
     {% endfor %}
     {% endif %}
 
