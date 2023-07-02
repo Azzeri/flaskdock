@@ -12,9 +12,7 @@ app.secret_key = 'your_secret_key'
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    users = User.query.all()
-
-    return render_template('search.html', users=users, auth=session.get('username'))
+    return redirect('/search/')
 
 
 @app.route("/search/", methods=['GET', 'POST'])
@@ -24,7 +22,8 @@ def search():
 
         solr_connector = SolrConnector()
         return solr_connector.searchByKeywords(query)
-    return render_template('search.html')
+    users = User.query.all()
+    return render_template('search.html', users=users, auth=session.get('username'))
 
 
 @app.route("/crawl/", methods=['GET', 'POST'])
