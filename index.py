@@ -74,6 +74,13 @@ def logout():
     return redirect('/')
 
 
+@app.route('/users', methods=['GET'])
+def users():
+    users = User.query.all()
+
+    return render_template('users.html', users=users)
+
+
 if __name__ == "__main__":
     init_database(app)
     app.run(host="0.0.0.0", port=int("3000"), debug=True)
