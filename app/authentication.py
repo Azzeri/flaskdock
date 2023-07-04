@@ -19,7 +19,7 @@ def login(request):
 def register(request):
     username = request.form['username']
     password = request.form['password']
-    interests = request.form['interests']
+    interests = get_form_interests(request.form)
 
     if User.query.filter_by(username=username).first():
         return False
@@ -36,3 +36,13 @@ def register(request):
 
 def logout():
     session.pop('username', None)
+
+
+def get_form_interests(form):
+    interests = ''
+    for input in form:
+        if input.startswith('i_'):
+            interests += form[input] + '|'
+    interests = interests[:-1]
+
+    return interests

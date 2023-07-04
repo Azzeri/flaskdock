@@ -5,14 +5,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semantica - register</title>
+    <style>
+        .interests {
+            display: flex;
+            flex-direction: column;
+            gap: .5em;
+        }
+    </style>
 </head>
 
 <body>
     {% block content %}
-    <form method="POST">
+    <form method="POST" style="display: flex; flex-direction: column; width: 15vw; gap: .3em;" onsubmit="handleSubmit(event)">
         <input type="text" name="username" placeholder="Username">
         <input type="password" name="password" placeholder="Password">
-        <input type="text" name="interests" placeholder="Tell us what you're into">
+        <div class="interests">
+            <div>
+                <input type="checkbox" value="sport" name="i_sport">sport
+                <input type="checkbox" value="art" name="i_art">art
+                <input type="checkbox" value="travels" name="i_travels">travels
+            </div>
+            <div>
+                <input type="checkbox" value="cooking" name="i_cooking">cooking
+                <input type="checkbox" value="technology" name="i_technology">technology
+                <input type="checkbox" value="music" name="i_music">music
+            </div>
+            <div>
+                <input type="checkbox" value="reading" name="i_reading">reading
+                <input type="checkbox" value="movies" name="i_movies">movies
+                <input type="checkbox" value="games" name="i_games">games
+            </div>
+            <div>
+                <input type="checkbox" value="animals" name="i_animals">animals
+                <input type="checkbox" value="fashion" name="i_fashion">fashion
+                <input type="checkbox" value="photography" name="i_photography">photography
+            </div>
+        </div>
         <button type="submit">Register</button>
     </form>
     {% endblock %}
