@@ -1,4 +1,5 @@
 Flask
+SQLAlchemy
 Requests
 simplejson
 pysolr
