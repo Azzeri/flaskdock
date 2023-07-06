@@ -2,6 +2,7 @@ from app.database import db
 from werkzeug.security import generate_password_hash, check_password_hash
 import heapq, json
 
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -13,7 +14,7 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+
     def update_interests(self, document_keywords):
         max_keywords_count = 20
 
@@ -22,23 +23,27 @@ class User(db.Model):
 
         for document_keyword in document_keywords:
             if document_keyword in user_keywords:
-                user_keywords[document_keyword]+=1
+                user_keywords[document_keyword] += 1
             else:
                 user_keywords[document_keyword] = 1
 
-        prepared_keywords = dict(heapq.nlargest(max_keywords_count, user_keywords.items(), key=lambda item: item[1]))
-        
+        prepared_keywords = dict(
+            heapq.nlargest(
+                max_keywords_count, user_keywords.items(), key=lambda item: item[1]
+            )
+        )
+
         self.interests = json.dumps(prepared_keywords)
         db.session.commit()
-    
+
     def prepare_document_keywords(self, keywords):
         first_document_keywords_count = 4
 
-        keywords = keywords.replace('[', "")
-        keywords = keywords.replace(']', "")
-        keywords = keywords.replace(' ', "")
-        keywords = keywords.replace('\'', "")
-        keywords = keywords.split(',')
+        keywords = keywords.replace("[", "")
+        keywords = keywords.replace("]", "")
+        keywords = keywords.replace(" ", "")
+        keywords = keywords.replace("'", "")
+        keywords = keywords.split(",")
 
         first_document_keywords = keywords[:first_document_keywords_count]
 
