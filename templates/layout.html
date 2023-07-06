@@ -20,12 +20,12 @@
                 <a type="button" class="btn btn-light" href="{{ url_for('crawl') }}">Crawler</a>
             </div>
             <div>              
-                {% if auth %}
-                <span class="h6 text-white me-2">{{auth.username}}({{ auth.id }})</span>
+                {% if session['username'] %}
+                <span class="h6 text-white me-2">{{ session['username'] }}</span>
                 <a type="button" class="btn btn-light" href="{{ url_for('logout') }}">Logout</a>
                 {% endif %}
 
-                {% if not auth %}
+                {% if not session['username'] %}
                 <a type="button" class="btn btn-light" href="{{ url_for('login') }}">Login</a>
                 <a type="button" class="btn btn-light" href="{{ url_for('register') }}">Register</a>
                 {% endif %}
