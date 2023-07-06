@@ -4,44 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semantica - register</title>
-    <style>
-        .interests {
-            display: flex;
-            flex-direction: column;
-            gap: .5em;
-        }
-    </style>
 </head>
 
 <body>
+    {% extends 'layout.html' %}
+
+    {% block title %}Semantica - register{% endblock %}
+
     {% block content %}
-    <form method="POST" style="display: flex; flex-direction: column; width: 15vw; gap: .3em;" onsubmit="handleSubmit(event)">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="password" placeholder="Password">
-        <div class="interests">
-            <div>
-                <input type="checkbox" value="sport" name="i_sport">sport
-                <input type="checkbox" value="art" name="i_art">art
-                <input type="checkbox" value="travels" name="i_travels">travels
+    <form method="POST" class="mt-3 w-25">
+        <input type="text" name="username" class="form-control mb-2" placeholder="username">
+        <input type="password" name="password" class="form-control mb-2" placeholder="password">
+        <div class="interests d-flex justify-content-between">
+            <div class="">
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="sport" name="i_sport">
+                    <label class="form-check-label" for="i_sport">Sport</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="art" name="i_art">
+                    <label class="form-check-label" for="i_art">Art</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="travels" name="i_travels">
+                    <label class="form-check-label" for="i_travels">Travels</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="cooking" name="i_cooking">
+                    <label class="form-check-label" for="i_cooking">Cooking</label>
+                </div>
             </div>
-            <div>
-                <input type="checkbox" value="cooking" name="i_cooking">cooking
-                <input type="checkbox" value="technology" name="i_technology">technology
-                <input type="checkbox" value="music" name="i_music">music
+            <div class="">
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="technology"
+                        name="i_technology">technology
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="music" name="i_music">music
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="reading" name="i_reading">reading
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="movies" name="i_movies">movies
+                </div>
             </div>
-            <div>
-                <input type="checkbox" value="reading" name="i_reading">reading
-                <input type="checkbox" value="movies" name="i_movies">movies
-                <input type="checkbox" value="games" name="i_games">games
-            </div>
-            <div>
-                <input type="checkbox" value="animals" name="i_animals">animals
-                <input type="checkbox" value="fashion" name="i_fashion">fashion
-                <input type="checkbox" value="photography" name="i_photography">photography
+            <div class="">
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="games" name="i_games">games
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="animals" name="i_animals">animals
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="fashion" name="i_fashion">fashion
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input me-2" type="checkbox" value="photography"
+                        name="i_photography">photography
+                </div>
             </div>
         </div>
-        <button type="submit">Register</button>
+        <button class="btn btn-primary mt-3" type="submit">Login</button>
     </form>
     {% endblock %}
 </body>
