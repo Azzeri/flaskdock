@@ -1,15 +1,15 @@
-from flask import Flask, render_template, request, redirect, session
+from flask import Flask, render_template, request, redirect, session, jsonify
 from app.solr_connector import SolrConnector
 from app.web_crawler import WebCrawler
-from app.database import User, init_database
+from app.database import db
+from app.user import User
 from app.wordnets import Wordnets
 import app.authentication as auth
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'your_secret_key'
-
+db.init_app(app)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -80,7 +80,18 @@ def users():
 
     return render_template('users.html', users=users)
 
+@app.route('/like')
+def like():
+    keywords = request.args.get('keywords')
+    auth = session.get('username')
+    auth_user = db.session.query(User).filter_by(username=auth).first()
+    
+    auth_user.update_interests(keywords)
+
+    return jsonify(result=auth_user.interests)
+
 
 if __name__ == "__main__":
-    init_database(app)
+    with app.app_context():
+        db.create_all()
     app.run(host="0.0.0.0", port=int("3000"), debug=True)

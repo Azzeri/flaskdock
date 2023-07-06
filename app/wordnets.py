@@ -1,12 +1,12 @@
 from nltk.corpus import wordnet
 from statistics import mean
 from itertools import chain
-
+import json
 
 class Wordnets:
     def __init__(self, search_results, user_interests):
         self.search_results = search_results
-        self.user_interests = user_interests
+        self.user_interests = json.loads(user_interests)
 
     def apply_recommendation_mechanism(self):
         documents_with_semantic_similarity = []

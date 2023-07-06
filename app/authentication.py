@@ -1,8 +1,7 @@
 from flask import session
-from app.database import get_db_instance, User
-
-db = get_db_instance()
-
+from app.database import db
+from app.user import User
+import json
 
 def login(request):
     username = request.form['username']
@@ -39,10 +38,10 @@ def logout():
 
 
 def get_form_interests(form):
-    interests = ''
+    default_count = 7
+    interests = {}
     for input in form:
         if input.startswith('i_'):
-            interests += form[input] + '|'
-    interests = interests[:-1]
+            interests[form[input]] = default_count
 
-    return interests
+    return json.dumps(interests)

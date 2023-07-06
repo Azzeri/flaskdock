@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semantica - search</title>
 </head>
 
 <body>
@@ -13,6 +12,7 @@
     {% block title %}Semantica - search{% endblock %}
 
     {% block content %}
+
     <form method="POST" class="mt-3 row">
         <div class="col-auto">
             <input type="text" name="query" class="form-control" placeholder="Search for..."
@@ -24,7 +24,7 @@
     </form>
 
     {% if auth %}
-    <div class="mt-3 lead">Your interests: <b>{{ auth.interests }}</b></div>
+    <div class="mt-3 lead">Your interests: <b><span id="auth_interests">{{ auth.interests }}</span></b></div>
     {% endif %}
 
     {% if searching_results %}
@@ -33,7 +33,12 @@
             <h4>Recommended</h4>
             {% for result in searching_results.sorted_results %}
             <div class="mb-1">
-                <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                <div class="d-flex">
+                    <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                    <button class="btn btn-sm like" data-keywords="{{result.keywords}}">
+                        <i class="fa-regular fa-thumbs-up ms-2"></i>
+                    </button>
+                </div>
                 <div><b>{{ result.keywords }}</b></div>
                 <div>SemScore: {{ result.semantic_similarity }}</div>
             </div>
@@ -50,6 +55,18 @@
         </div>
     </main>
     {% endif %}
+    <script>
+        $(function () {
+            $('.like').bind('click', function () {
+                $.getJSON($SCRIPT_ROOT + '/like', {
+                    keywords: $(this).data('keywords'),
+                }, function (data) {
+                    $("#auth_interests").text(data.result);
+                });
+                return false;
+            });
+        });
+    </script>
     {% endblock %}
 
 </body>
