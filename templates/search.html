@@ -5,68 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semantica - search</title>
-    <style>
-        nav {
-            padding: 1rem;
-            width: 100vw;
-            background-color: darkgray;
-        }
-
-        form {
-            margin-top: 2rem;
-        }
-
-        main {
-            width: 100vw;
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
 </head>
 
 <body>
-    <nav>
-        <div>
-            {% if auth %}
-            Authenticated as: {{auth.username}}({{ auth.id }})
-            <a href="{{ url_for('logout') }}">Logout</a>
-            {% endif %}
+    {% extends 'layout.html' %}
 
-            {% if not auth %}
-            <a href="{{ url_for('login') }}">Login</a>
-            <a href="{{ url_for('register') }}">Register</a>
-            {% endif %}
-            <a href="{{ url_for('users') }}">Users</a>
+    {% block title %}Semantica - search{% endblock %}
+
+    {% block content %}
+    <form method="POST" class="mt-3 row">
+        <div class="col-auto">
+            <input type="text" name="query" class="form-control" placeholder="Search for..."
+                value="{{ request.form['query'] }}">
         </div>
-    </nav>
-    <form method="POST">
-        <input type="text" name="query" placeholder="Search for..." value="{{ request.form['query'] }}">
-        <button type="submit">Search</button>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
     </form>
+
+    {% if auth %}
+    <div class="mt-3 lead">Your interests: <b>{{ auth.interests }}</b></div>
+    {% endif %}
+
     {% if searching_results %}
-    <div style="margin-top: 1rem;">Your interests: <b>{{ auth.interests }}</b></div>
-    <main>
+    <main class="mt-3 d-flex justify-content-between gap-3">
         <div>
-            <h3>Recommended</h3>
+            <h4>Recommended</h4>
             {% for result in searching_results.sorted_results %}
-            <div style="margin-bottom: 1rem;">
-                <a style="display:block;" href="{{ result.id }}">{{ result.title }}: {{ result.id }}</a>
+            <div class="mb-1">
+                <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
                 <div><b>{{ result.keywords }}</b></div>
                 <div>SemScore: {{ result.semantic_similarity }}</div>
             </div>
             {% endfor %}
         </div>
         <div>
-            <h3>Default</h3>
+            <h4>Default</h4>
             {% for result in searching_results.unsorted_results %}
-            <div style="margin-bottom: 1rem;">
-                <a style="display:block;" href="{{ result.id }}">{{ result.title }}: {{ result.id }}</a>
+            <div class="mb-1">
+                <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
                 <div><b>{{ result.keywords }}</b></div>
             </div>
             {% endfor %}
         </div>
     </main>
     {% endif %}
+    {% endblock %}
 
 </body>
 
