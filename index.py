@@ -36,12 +36,14 @@ def search():
             "unsorted_results": unsorted_results,
             "sorted_results": sorted_results,
         }
+
         return render_template(
             "search.html",
             users=users,
             auth=auth_user,
             searching_results=searching_results,
         )
+
     return render_template(
         "search.html", users=users, auth=auth_user, searching_results=None
     )

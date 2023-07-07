@@ -16,12 +16,14 @@ class Wordnets:
             document["semantic_similarity"] = semantic_similarity
 
             documents_with_semantic_similarity.append(document)
+
         sorted_documents = sorted(
             documents_with_semantic_similarity,
             key=lambda x: x["semantic_similarity"],
             reverse=True,
         )
-        return sorted_documents
+
+        return self.analyze_positions(sorted_documents)
 
     def get_semantic_similarity(self, document):
         similarity_scores = []
@@ -56,3 +58,9 @@ class Wordnets:
 
     def synsets_exist(self, keyword_synsets, interest_synsets):
         return len(keyword_synsets) > 0 and len(interest_synsets) > 0
+
+    def analyze_positions(self, documents):
+        for index, document in enumerate(documents, start=1):
+            document["new_position"] = index
+            document["positions_difference"] = document["position"] - index
+        return documents

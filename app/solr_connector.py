@@ -14,10 +14,11 @@ class SolrConnector:
     def searchByKeywords(self, query):
         searchResults = self.solr_instance.search(f"keywords:{query}")
         preparedResults = []
-        for result in searchResults:
+        for index, result in enumerate(searchResults, start=1):
             preparedResults.append(
                 {
                     "id": result["id"],
+                    "position": index,
                     "title": result["title"][0],
                     "keywords": result["keywords"],
                 }

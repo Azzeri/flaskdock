@@ -32,15 +32,29 @@
         <div>
             <h4>Recommended</h4>
             {% for result in searching_results.sorted_results %}
-            <div class="mb-1">
-                <div class="d-flex">
-                    <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
-                    <button class="btn btn-sm like" data-keywords="{{result.keywords}}">
-                        <i class="fa-regular fa-thumbs-up ms-2"></i>
-                    </button>
+            <div class="mb-1 px-1">
+                <div
+                    class="px-1 d-flex justify-content-between {% if result.positions_difference > 0 %}bg-success-subtle{%endif%} {% if result.positions_difference < 0 %}bg-danger-subtle{%endif%}">
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">{{ result.position }}.</span>
+                        <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                        <button class="btn btn-sm like" data-keywords="{{result.keywords}}">
+                            <i class="fa-regular fa-thumbs-up ms-2"></i>
+                        </button>
+                    </div>
+                    <div>
+                        {% if result.positions_difference > 0 %}
+                        {{ result.positions_difference }} positions up
+                        <i class="fa-solid fa-chevron-up text-success ms-1"></i>
+                        {%endif%}
+
+                        {% if result.positions_difference < 0 %} {{ result.positions_difference * -1 }} positions down
+                            <i class="fa-solid fa-chevron-down text-danger ms-1"></i>
+                            {%endif%}
+                    </div>
                 </div>
-                <div><b>{{ result.keywords }}</b></div>
-                <div>SemScore: {{ result.semantic_similarity }}</div>
+                <div class="px-1"><b>{{ result.keywords }}</b></div>
+                <div class="px-1">SemScore: {{ result.semantic_similarity }}</div>
             </div>
             {% endfor %}
         </div>
@@ -48,7 +62,10 @@
             <h4>Default</h4>
             {% for result in searching_results.unsorted_results %}
             <div class="mb-1">
-                <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                <div class="d-flex">
+                    <span class="me-2">{{ result.position }}.</span>
+                    <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                </div>
                 <div><b>{{ result.keywords }}</b></div>
             </div>
             {% endfor %}
