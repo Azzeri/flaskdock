@@ -57,6 +57,17 @@ def crawl():
         web_crawler = WebCrawler()
         web_crawler.crawl(url)
 
+        # urls = [
+        #     "https://en.wikipedia.org/wiki/Dog",
+        #     "https://www.mdpi.com/journal/animals",
+        #     "https://en.wikipedia.org/wiki/Animal",
+        #     "https://kids.nationalgeographic.com/animals",
+        #     "https://nationalzoo.si.edu/animals",
+        #     "https://a-z-animals.com/",
+        # ]
+
+        # web_crawler.crawl_many(urls)
+
     return render_template("crawl.html")
 
 
