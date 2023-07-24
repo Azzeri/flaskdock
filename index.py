@@ -21,7 +21,6 @@ def home():
 def search():
     auth = session.get("username")
     auth_user = User.query.filter_by(username=auth).first()
-    users = User.query.all()
 
     if request.method == "POST":
         query = request.form["query"]
@@ -39,7 +38,6 @@ def search():
 
         return render_template(
             "search.html",
-            users=users,
             auth=auth_user,
             searching_results=searching_results,
         )
@@ -53,10 +51,9 @@ def search():
 def crawl():
     if request.method == "POST":
         url = request.form["url"]
-
         web_crawler = WebCrawler()
-        web_crawler.crawl(url)
-
+        # keywords = web_crawler.crawl(url)
+        # return keywords
         # urls = [
         #     "https://en.wikipedia.org/wiki/Dog",
         #     "https://www.mdpi.com/journal/animals",
@@ -65,7 +62,7 @@ def crawl():
         #     "https://nationalzoo.si.edu/animals",
         #     "https://a-z-animals.com/",
         # ]
-
+        web_crawler.crawl(url)
         # web_crawler.crawl_many(urls)
 
     return render_template("crawl.html")

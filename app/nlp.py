@@ -4,15 +4,28 @@ from bs4 import BeautifulSoup
 from nltk.probability import FreqDist
 from nltk import pos_tag
 from re import sub
+from nltk.stem import WordNetLemmatizer
+from nltk.wsd import lesk
 
 
 class Nlp:
-    NUMBER_OF_KEYWORDS = 15
+    NUMBER_OF_KEYWORDS = 20
 
     def generate_keywords(self, text):
         tokens = self.remove_needless_words(text)
         keywords = self.filter_parts_of_speech(tokens)
-        return self.get_top_keywords(keywords)
+        lemmas = self.lemmatize_terms(keywords)
+        top_words = self.get_top_keywords(lemmas)
+
+        synsets = []
+        for word in top_words:
+            word_sense = lesk(top_words, word, "n")
+            try:
+                synsets.append(word_sense.name())
+            except:
+                continue
+
+        return [top_words, synsets]
 
     def remove_needless_words(self, text):
         text = BeautifulSoup(text, "html.parser").get_text()
@@ -32,3 +45,8 @@ class Nlp:
         return [
             keyword for keyword, _ in freq_dist.most_common(self.NUMBER_OF_KEYWORDS)
         ]
+
+    def lemmatize_terms(self, terms):
+        lemmatizer = WordNetLemmatizer()
+        lemmas = [lemmatizer.lemmatize(word) for word in terms]
+        return lemmas

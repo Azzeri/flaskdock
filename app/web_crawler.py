@@ -21,8 +21,8 @@ class WebCrawler:
     def crawl(self, url):
         urls = []
         urls.append(url)
-        response = get(url)
 
+        response = get(url)
         parsed_url = urlparse(url)
         domain = parsed_url.netloc
         if parsed_url.scheme:
@@ -51,11 +51,13 @@ class WebCrawler:
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, "html.parser")
                     keywords = self.nlp.generate_keywords(response.content)
+
                     document = {
                         "id": url,
                         "title": soup.title.string if soup.title else None,
                         "text": response.content,
-                        "keywords": keywords,
+                        "keywords": keywords[0],
+                        "synsets": keywords[1],
                     }
                     solr.add(document)
             except:

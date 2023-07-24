@@ -24,6 +24,7 @@ class SolrConnector:
                     "position": index,
                     "title": result["title"][0],
                     "keywords": result["keywords"],
+                    "synsets": result["synsets"],
                 }
             )
         return preparedResults

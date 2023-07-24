@@ -26,38 +26,20 @@ class Wordnets:
         return self.analyze_positions(sorted_documents)
 
     def get_semantic_similarity(self, document):
-        similarity_scores = []
-        for keyword in document["keywords"]:
-            keyword_synsets = wordnet.synsets(keyword)
-            for interest in self.user_interests:
-                interest_synsets = wordnet.synsets(interest)
+        wp_similarities = []
+        for document_synset in document["synsets"]:
+            document_synset = wordnet.synset(document_synset)
+            for interest_synset in self.user_interests:
+                interest_synset = wordnet.synset(interest_synset)
+                if document_synset.pos() == interest_synset.pos():
+                    wp_similarity = interest_synset.wup_similarity(document_synset)
+                    wp_similarities.append(wp_similarity)
 
-                if self.synsets_exist(keyword_synsets, interest_synsets):
-                    similarity_scores.append(
-                        self.get_similarity_scores_for_every_synsets_pair(
-                            keyword_synsets, interest_synsets
-                        )
-                    )
-
-        return self.get_semantic_similarities_average(similarity_scores)
+        return self.get_semantic_similarities_average(wp_similarities)
 
     def get_semantic_similarities_average(self, similarity_scores):
         if len(similarity_scores) > 0:
-            return mean(list(chain(*similarity_scores)))
-
-    def get_similarity_scores_for_every_synsets_pair(
-        self, keyword_synsets, interest_synsets
-    ):
-        wp_similarities = []
-        for keyword_synset in keyword_synsets:
-            for interest_synset in interest_synsets:
-                if keyword_synset.pos() == interest_synset.pos():
-                    wp_similarity = interest_synset.wup_similarity(keyword_synset)
-                    wp_similarities.append(wp_similarity)
-        return wp_similarities
-
-    def synsets_exist(self, keyword_synsets, interest_synsets):
-        return len(keyword_synsets) > 0 and len(interest_synsets) > 0
+            return sum(similarity_scores) / len(similarity_scores)
 
     def analyze_positions(self, documents):
         for index, document in enumerate(documents, start=1):
