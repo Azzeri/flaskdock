@@ -24,11 +24,11 @@
     </form>
 
     {% if auth %}
-    <div class="mt-3 lead">Your interests: <b><span id="auth_interests">{{ auth.interests }}</span></b></div>
+    <div class="mt-3">User interests: <b><span id="auth_interests">{{ auth.interests }}</span></b></div>
     {% endif %}
 
     {% if searching_results %}
-    <main class="mt-3 d-flex justify-content-between gap-3">
+    <main class="mt-3 d-flex gap-3">
         <div>
             <h4>Recommended</h4>
             {% for result in searching_results.sorted_results %}
@@ -53,7 +53,16 @@
                             {%endif%}
                     </div>
                 </div>
-                <div class="px-1"><b>{{ result.keywords }}</b></div>
+                <div class="px-1"><b>Keywords:</b>
+                    {% for keyword in result.keywords[:10] %}
+                    {{keyword}},
+                    {%endfor%}
+                </div>
+                <div class="px-1"><b>Synsets:</b>
+                    {% for keyword in result.synsets[:10] %}
+                    {{keyword}},
+                    {%endfor%}
+                </div>
                 <div class="px-1">SemScore: {{ result.semantic_similarity }}</div>
             </div>
             {% endfor %}
@@ -66,7 +75,10 @@
                     <span class="me-2">{{ result.position }}.</span>
                     <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
                 </div>
-                <div><b>{{ result.keywords }}</b></div>
+                <div><b>Keywords:</b>
+                    {% for keyword in result.keywords[:10] %}
+                    {{keyword}},
+                    {%endfor%}</div>
             </div>
             {% endfor %}
         </div>
