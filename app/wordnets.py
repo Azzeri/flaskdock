@@ -35,9 +35,9 @@ class Wordnets:
                     wp_similarity = interest_synset.wup_similarity(document_synset)
                     wp_similarities.append(wp_similarity)
 
-        return self.get_semantic_similarities_average(wp_similarities)
+        return self.get_document_average(wp_similarities)
 
-    def get_semantic_similarities_average(self, similarity_scores):
+    def get_document_average(self, similarity_scores):
         if len(similarity_scores) > 0:
             return sum(similarity_scores) / len(similarity_scores)
 

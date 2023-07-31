@@ -15,36 +15,34 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def update_interests(self, document_keywords):
-        max_keywords_count = 20
+    def update_user_interests(self, document_synsets):
+        max_synsets_count = 20
+        user_synsets = json.loads(self.interests)
+        document_synsets = self.prepare_document_synsets(document_synsets)
 
-        user_keywords = json.loads(self.interests)
-        document_keywords = self.prepare_document_keywords(document_keywords)
-
-        for document_keyword in document_keywords:
-            if document_keyword in user_keywords:
-                user_keywords[document_keyword] += 1
+        for document_synset in document_synsets:
+            if document_synset in user_synsets:
+                user_synsets[document_synset] += 1
             else:
-                user_keywords[document_keyword] = 1
+                user_synsets[document_synset] = 1
 
-        prepared_keywords = dict(
+        prepared_synsets = dict(
             heapq.nlargest(
-                max_keywords_count, user_keywords.items(), key=lambda item: item[1]
+                max_synsets_count, user_synsets.items(), key=lambda item: item[1]
             )
         )
-
-        self.interests = json.dumps(prepared_keywords)
+        self.interests = json.dumps(prepared_synsets)
         db.session.commit()
 
-    def prepare_document_keywords(self, keywords):
-        first_document_keywords_count = 4
+    def prepare_document_synsets(self, synsets):
+        first_document_synsets_count = 4
 
-        keywords = keywords.replace("[", "")
-        keywords = keywords.replace("]", "")
-        keywords = keywords.replace(" ", "")
-        keywords = keywords.replace("'", "")
-        keywords = keywords.split(",")
+        synsets = synsets.replace("[", "")
+        synsets = synsets.replace("]", "")
+        synsets = synsets.replace(" ", "")
+        synsets = synsets.replace("'", "")
+        synsets = synsets.split(",")
 
-        first_document_keywords = keywords[:first_document_keywords_count]
+        first_document_synsets = synsets[:first_document_synsets_count]
 
-        return first_document_keywords
+        return first_document_synsets

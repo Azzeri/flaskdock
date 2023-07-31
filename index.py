@@ -101,11 +101,10 @@ def users():
 
 @app.route("/like")
 def like():
-    keywords = request.args.get("keywords")
+    synsets = request.args.get("synsets")
     auth = session.get("username")
     auth_user = db.session.query(User).filter_by(username=auth).first()
-
-    auth_user.update_interests(keywords)
+    auth_user.update_user_interests(synsets)
 
     return jsonify(result=auth_user.interests)
 

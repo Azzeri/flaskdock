@@ -13,26 +13,30 @@ class Nlp:
 
     def generate_keywords(self, text):
         tokens = self.remove_needless_words(text)
-        keywords = self.filter_parts_of_speech(tokens)
-        lemmas = self.lemmatize_terms(keywords)
-        top_words = self.get_top_keywords(lemmas)
+        filtered_tokens = self.filter_parts_of_speech(tokens)
+        lemmas = self.lemmatize_terms(filtered_tokens)
+        keywords = self.get_top_keywords(lemmas)
 
         synsets = []
-        for word in top_words:
-            word_sense = lesk(top_words, word, "n")
+        for word in keywords:
+            word_sense = lesk(keywords, word, "n")
             try:
                 synsets.append(word_sense.name())
             except:
                 continue
 
-        return [top_words, synsets]
+        return [keywords, synsets]
 
     def remove_needless_words(self, text):
         text = BeautifulSoup(text, "html.parser").get_text()
         text = sub(r"[^\w\s]", "", text)
         tokens = word_tokenize(text)
         stop_words = set(stopwords.words("english"))
-        return [token.lower() for token in tokens if token.lower() not in stop_words]
+        return [
+            token.lower()
+            for token in tokens
+            if token.lower() not in stop_words and len(token) > 1
+        ]
 
     def filter_parts_of_speech(self, text):
         pos_tags = pos_tag(text)

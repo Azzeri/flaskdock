@@ -38,7 +38,7 @@
                     <div class="d-flex align-items-center">
                         <span class="me-2">{{ result.position }}.</span>
                         <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
-                        <button class="btn btn-sm like" data-keywords="{{result.keywords}}">
+                        <button class="btn btn-sm like" data-synsets="{{result.synsets}}">
                             <i class="fa-regular fa-thumbs-up ms-2"></i>
                         </button>
                     </div>
@@ -88,7 +88,7 @@
         $(function () {
             $('.like').bind('click', function () {
                 $.getJSON($SCRIPT_ROOT + '/like', {
-                    keywords: $(this).data('keywords'),
+                    synsets: $(this).data('synsets'),
                 }, function (data) {
                     $("#auth_interests").text(data.result);
                 });

@@ -21,25 +21,26 @@ class WebCrawler:
     def crawl(self, url):
         urls = []
         urls.append(url)
-
+        domain = self.get_domain(url)
         response = get(url)
-        parsed_url = urlparse(url)
-        domain = parsed_url.netloc
-        if parsed_url.scheme:
-            domain = parsed_url.scheme + "://" + domain
-
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, "html.parser")
             if self.is_page_in_english(soup):
                 for link in soup.find_all("a"):
                     href = link.get("href")
-
                     if href and href.startswith("/"):
                         extended_url = domain + href
                         if extended_url not in (urls):
                             urls.append(domain + href)
 
         self.index(urls)
+
+    def get_domain(self, url):
+        parsed_url = urlparse(url)
+        domain = parsed_url.netloc
+        if parsed_url.scheme:
+            domain = parsed_url.scheme + "://" + domain
+        return domain
 
     def index(self, urls):
         solr_connector = SolrConnector()
@@ -50,14 +51,13 @@ class WebCrawler:
                 response = get(url)
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, "html.parser")
-                    keywords = self.nlp.generate_keywords(response.content)
-
+                    keywords_synsets = self.nlp.generate_keywords(response.content)
                     document = {
                         "id": url,
                         "title": soup.title.string if soup.title else None,
                         "text": response.content,
-                        "keywords": keywords[0],
-                        "synsets": keywords[1],
+                        "keywords": keywords_synsets[0],
+                        "synsets": keywords_synsets[1],
                     }
                     solr.add(document)
             except:
