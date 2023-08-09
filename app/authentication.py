@@ -39,7 +39,7 @@ def logout():
 
 
 def get_form_interests(form):
-    default_count = 5
+    default_count = 4
     interests = {}
     for input in form:
         if input.startswith("i_"):

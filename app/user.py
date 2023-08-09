@@ -16,7 +16,7 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
     def update_user_interests(self, document_synsets):
-        max_synsets_count = 20
+        max_synsets_count = 19
         user_synsets = json.loads(self.interests)
         document_synsets = self.prepare_document_synsets(document_synsets)
 
@@ -35,7 +35,7 @@ class User(db.Model):
         db.session.commit()
 
     def prepare_document_synsets(self, synsets):
-        first_document_synsets_count = 4
+        first_document_synsets_count = 2
 
         synsets = synsets.replace("[", "")
         synsets = synsets.replace("]", "")

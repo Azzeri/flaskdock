@@ -13,11 +13,24 @@ class SolrConnector:
         return Solr(self.solr_url, always_commit=True)
 
     def searchByKeywords(self, query):
+        keywords = query.split()
+        query_string = " OR ".join(f"keywords:{keyword}" for keyword in keywords)
+
         searchResults = self.solr_instance.search(
-            f"keywords:{query}", rows=self.no_results
+            query_string,
+            rows=self.no_results,
         )
+
+        deduplicated = []
+        encountered_titles = set()
+        for result in searchResults:
+            title = result["title"][0]
+            if title not in encountered_titles:
+                deduplicated.append(result)
+                encountered_titles.add(title)
+
         preparedResults = []
-        for index, result in enumerate(searchResults, start=1):
+        for index, result in enumerate(deduplicated, start=1):
             preparedResults.append(
                 {
                     "id": result["id"],
@@ -27,4 +40,14 @@ class SolrConnector:
                     "synsets": result["synsets"],
                 }
             )
+
+        # filtered_data = []
+        # seen_names = set()
+
+        # for item in preparedResults:
+        #     title = item["title"][0]
+        #     if title not in seen_names:
+        #         filtered_data.append(item)
+        #         seen_names.add(title)
+
         return preparedResults
