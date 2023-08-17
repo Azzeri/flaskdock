@@ -5,6 +5,7 @@ from app.database import db
 from app.user import User
 from app.wordnets import Wordnets
 import app.authentication as auth
+import json
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
@@ -28,13 +29,22 @@ def search():
         solr_connector = SolrConnector()
         unsorted_results = solr_connector.searchByKeywords(query)
 
-        wordnets = Wordnets(unsorted_results, auth_user.interests)
+        wordnets = Wordnets(unsorted_results[:18], auth_user.interests)
         sorted_results = wordnets.apply_recommendation_mechanism()
 
         searching_results = {
             "unsorted_results": unsorted_results[:18],
             "sorted_results": sorted_results[:18],
         }
+
+        with open("logs/log.txt", "a") as file:
+            file.write("\n-----PHASE-----\n")
+            file.write("Query: " + query + "\n")
+            file.write("User:" + auth_user.interests + "\n")
+            file.write("Default:\n")
+            json.dump(unsorted_results[:18], file)
+            file.write("\n\nSorted:\n")
+            json.dump(sorted_results[:18], file)
 
         return render_template(
             "search.html",
@@ -381,14 +391,83 @@ def users():
     return render_template("users.html", users=users)
 
 
+@app.route("/mark/")
+def mark():
+    with open("logs/log.txt", "a") as file:
+        file.write("\nRelevant result:\n")
+        json.dump(request.args.get("result"), file)
+        file.write(", Real position: " + request.args.get("real_position"))
+        file.write(", Type: " + request.args.get("type"))
+    return "ok"
+
+
 @app.route("/like")
 def like():
     synsets = request.args.get("synsets")
+
     auth = session.get("username")
     auth_user = db.session.query(User).filter_by(username=auth).first()
     auth_user.update_user_interests(synsets)
 
+    with open("logs/log.txt", "a") as file:
+        file.write("\nLiked result:\n")
+        json.dump(request.args.get("result"), file)
+        file.write(", Real position: " + request.args.get("real_position"))
+
     return jsonify(result=auth_user.interests)
+
+
+@app.route("/analysis")
+def analysis():
+    from scipy import stats
+
+    # Nienormalny
+    q1_p1_g1 = [
+        0.333333333,
+        0.166666667,
+        0.166666667,
+        0.333333333,
+        0.166666667,
+        0.666666667,
+        0.166666667,
+    ]
+    # Normalny
+    q1_p1_g2 = [
+        0.333333333,
+        0.333333333,
+        0,
+        0.166666667,
+        0.666666667,
+        0.166666667,
+        0.166666667,
+    ]
+    # Normalny
+    q1_p1_g3 = [0.166666667, 0.666666667, 0.5, 0.333333333, 0.5, 0.5, 0.666666667]
+
+    # Normalny
+    q1_p2_g1 = [0.5, 0.333333333, 0.5, 0.333333333, 0.666666667, 0.666666667, 0.5]
+    # Normalny
+    q1_p2_g2 = [0.333333333, 0.5, 0, 0.166666667, 0.5, 0.666666667, 0.333333333]
+    # Normalny
+    q1_p2_g3 = [0, 0.333333333, 0.166666667, 0.333333333, 0.166666667, 0, 0.166666667]
+
+    # statistic, p_value = stats.shapiro(q1_p1_g1)
+    # return str(p_value)
+    statistic, p_value = stats.ttest_rel(q1_p1_g3, q1_p2_g3)
+
+    # Interpretacja wyników
+    alpha = 0.05
+    if p_value < alpha:
+        return "Różnice są istotne statystycznie - odrzucamy hipotezę zerową."
+    else:
+        return "Nie ma istotnych różnic - nie odrzucamy hipotezy zerowej."
+
+    # # Normalność
+    # alpha = 0.05
+    # if p_value < alpha:
+    #     return "Rozkład danych nie jest normalny - odrzucamy hipotezę zerową."
+    # else:
+    #     return "Rozkład danych jest normalny - nie odrzucamy hipotezy zerowej."
 
 
 if __name__ == "__main__":

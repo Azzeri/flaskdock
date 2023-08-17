@@ -38,8 +38,13 @@
                     <div class="d-flex align-items-center">
                         <span class="me-2">{{ result.position }}.</span>
                         <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
-                        <button class="btn btn-sm like" data-synsets="{{result.synsets}}">
-                            <i class="fa-regular fa-thumbs-up ms-2"></i>
+                        <button class="btn btn-sm like" data-result="{{result}}" data-synsets="{{result.synsets}}"
+                            data-real-position="{{ loop.index }}">
+                            <i class="fa-regular fa-heart ms-2"></i>
+                        </button>
+                        <button class="btn btn-sm mark-result" data-result="{{ result }}"
+                            data-real-position="{{ loop.index }}" data-type="recommended">
+                            <i class="fa-regular fa-thumbs-up"></i>
                         </button>
                     </div>
                     <div>
@@ -74,6 +79,10 @@
                 <div class="d-flex">
                     <span class="me-2">{{ result.position }}.</span>
                     <a class="link-offset-2" href="{{ result.id }}">{{ result.title }}</a>
+                    <button class="btn btn-sm mark-result" data-result="{{ result }}"
+                        data-real-position="{{ loop.index }}" data-type="default">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    </button>
                 </div>
                 <div><b>Keywords:</b>
                     {% for keyword in result.keywords[:10] %}
@@ -89,12 +98,27 @@
             $('.like').bind('click', function () {
                 $.getJSON($SCRIPT_ROOT + '/like', {
                     synsets: $(this).data('synsets'),
+                    result: $(this).data('result'),
+                    real_position: $(this).data('real-position'),
                 }, function (data) {
                     $("#auth_interests").text(data.result);
                 });
                 return false;
             });
         });
+
+        $(function () {
+            $('.mark-result').bind('click', function () {
+                $.getJSON($SCRIPT_ROOT + '/mark/', {
+                    result: $(this).data('result'),
+                    real_position: $(this).data('real-position'),
+                    type: $(this).data('type'),
+                }, function (data) {
+                });
+                return false;
+            });
+        })
+
     </script>
     {% endblock %}
 
